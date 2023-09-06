@@ -65,3 +65,26 @@ const Component = () => {
 ### Default empty layout
 
 ![Default empty layout](img/default-empty-layout.png)
+
+## Use Legend state power
+
+There is a second hook drop in replacement `useObservableQueryLayout` that can be used with [Legend State](https://legendapp.com/open-source/state) to manage your state. It allows you to use the power of [For](https://legendapp.com/open-source/state/fine-grained-reactivity/#for) in legend state for example.
+
+```typescript jsx
+const Component = () => {
+  const {layout} = useObservableQueryLayout({
+    queryKey: ['getPosts'],
+    queryFn: () => api.get<Post[]>(`/posts`).then(res => res.data),
+    loadingLayout: <Placeholder />,
+    hydratedLayout: posts => (
+      <SimpleGrid columns={2} spacing={5}>
+        <For each={posts} optimized> // Using legend state rocks
+          {item => <PostItem post={item.get()!} />}
+        </For>
+      </SimpleGrid>
+    ),
+  })
+
+  return layout
+}
+```

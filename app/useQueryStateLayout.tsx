@@ -26,7 +26,6 @@ interface QueryLayoutProps<T> {
   loadingLayout?: ReactNode | ReactNode[]
   errorLayout?: ReactNode | ReactNode[]
   emptyLayout?: ReactNode | ReactNode[]
-  hydratedLayout: (data: T) => ReactNode | ReactNode[]
 }
 
 interface ErrorProps {
@@ -42,6 +41,14 @@ interface EmptyProps {
 interface SizeProps {
   iconSize?: number
   debug?: boolean
+}
+
+interface HydratedProps<T> {
+  hydratedLayout: (data: T) => ReactNode | ReactNode[]
+}
+
+interface ObservableHydratedProps<T> {
+  hydratedLayout: (data: ObservableObject<T>) => ReactNode | ReactNode[]
 }
 
 const useQueryState = <T extends {} | T[]>({
@@ -104,7 +111,12 @@ const useQueryLayout = <T extends {} | T[]>({
   iconSize,
   enabled,
   debug,
-}: QueryStateProps<T> & QueryLayoutProps<T> & ErrorProps & EmptyProps & SizeProps) => {
+}: QueryStateProps<T> &
+  HydratedProps<T> &
+  QueryLayoutProps<T> &
+  ErrorProps &
+  EmptyProps &
+  SizeProps) => {
   const {state, data} = useQueryState<T>({queryKey, queryFn, enabled})
 
   debug && console.log(state.get())
@@ -140,7 +152,12 @@ const useObservableQueryLayout = <T extends {} | T[]>({
   iconSize,
   enabled,
   debug,
-}: QueryStateProps<T> & QueryLayoutProps<T> & ErrorProps & EmptyProps & SizeProps) => {
+}: QueryStateProps<T> &
+  ObservableHydratedProps<T> &
+  QueryLayoutProps<T> &
+  ErrorProps &
+  EmptyProps &
+  SizeProps) => {
   const {state, data} = useObservableQueryState({
     queryKey,
     queryFn,
@@ -160,7 +177,7 @@ const useObservableQueryLayout = <T extends {} | T[]>({
             errorLayout || defaultLayout('error', errorLayoutIcon, errorLayoutMessage, iconSize),
           [ComponentState.Empty]: () =>
             emptyLayout || defaultLayout('empty', emptyLayoutIcon, emptyLayoutMessage, iconSize),
-          [ComponentState.Hydrated]: () => hydratedLayout(data.get()),
+          [ComponentState.Hydrated]: () => hydratedLayout(data),
         }}
       </Switch>
     ),
