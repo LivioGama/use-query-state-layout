@@ -2,9 +2,12 @@
 import NiceSwitch from '@/app/(home)/NiceSwitch'
 import {ObservableQueryLayoutComponent} from '@/app/(home)/ObservableQueryLayoutComponent'
 import {QueryLayoutComponent} from '@/app/(home)/QueryLayoutComponent'
+import {defaultLayout} from '@/app/useQueryStateLayout'
 import {
+  Box,
   Button,
   Container,
+  Divider,
   Heading,
   HStack,
   Text,
@@ -41,7 +44,22 @@ const Home = () => {
           <Text fontSize='2xl'>useObservableQueryLayout</Text>
         </HStack>
 
-        {isOn ? <ObservableQueryLayoutComponent /> : <QueryLayoutComponent />}
+        <VStack spacing={20} alignItems='start' w='full'>
+          <Box maxH='500px' overflowY='scroll' w='full'>
+            {isOn ? <ObservableQueryLayoutComponent /> : <QueryLayoutComponent />}
+          </Box>
+
+          <VStack w='full' alignItems='start'>
+            <Heading>Default error layout</Heading>
+            <Divider />
+          </VStack>
+          {defaultLayout('error')}
+          <VStack w='full' alignItems='start'>
+            <Heading>Default empty layout</Heading>
+            <Divider />
+          </VStack>
+          {defaultLayout('empty')}
+        </VStack>
       </VStack>
     </Container>
   )

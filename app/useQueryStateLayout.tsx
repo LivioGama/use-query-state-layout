@@ -178,7 +178,7 @@ const defaultLayout = (
     mode === 'error' ? <FcHighPriority size={iconSize} /> : <FcViewDetails size={iconSize} />
   const defaultMessage = mode === 'error' ? 'Error loading data, please retry' : 'No data yet'
   return (
-    <Center color='gray.500'>
+    <Center color='gray.500' w='full'>
       <VStack>
         {LayoutIcon ? <LayoutIcon size={iconSize} /> : defaultLayoutIcon}
         <Heading>{message || defaultMessage}</Heading>
@@ -187,4 +187,10 @@ const defaultLayout = (
   )
 }
 
-export {useQueryState, useObservableQueryState, useQueryLayout, useObservableQueryLayout}
+export {
+  useQueryState,
+  useObservableQueryState,
+  useQueryLayout,
+  useObservableQueryLayout,
+  defaultLayout,
+}
