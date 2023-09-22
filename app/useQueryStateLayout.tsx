@@ -1,19 +1,19 @@
 import ThreeDotsWave from '@/app/LoaderFullScreen'
-import {Center, Heading, VStack} from '@chakra-ui/react'
+import {Center, CenterProps, Heading, VStack} from '@chakra-ui/react'
 import {ObservableObject, ObservablePrimitiveChildFns} from '@legendapp/state'
 import {Switch, useObservable} from '@legendapp/state/react'
 import {useObservableQuery} from '@legendapp/state/react-hooks/useObservableQuery'
 import {QueryKey, useQuery} from '@tanstack/react-query'
 import isEmpty from 'lodash/isEmpty'
-import {ReactNode} from 'react'
+import {ReactNode, useEffect, useState} from 'react'
 import {IconType} from 'react-icons'
 import {FcHighPriority, FcViewDetails} from 'react-icons/fc'
 
-export enum ComponentState {
-  Loading,
-  Error,
-  Empty,
-  Hydrated,
+enum ComponentState {
+  Loading = 'Loading',
+  Error = 'Error',
+  Empty = 'Empty',
+  Hydrated = 'Hydrated',
 }
 
 interface QueryStateProps<T> {
@@ -118,20 +118,41 @@ const useQueryLayout = <T extends {} | T[]>({
   EmptyProps &
   SizeProps) => {
   const {state, data} = useQueryState<T>({queryKey, queryFn, enabled})
+  const [localData, setLocalData] = useState<T>()
 
   debug && console.log(state.get())
+
+  useEffect(() => {
+    if (state.get() === ComponentState.Hydrated) {
+      setLocalData(data)
+    }
+  }, [state.get()])
 
   return {
     data,
     layout: (
       <Switch value={state.get()}>
         {{
-          [ComponentState.Loading]: () => loadingLayout,
+          [ComponentState.Loading]: () => loadingLayout || <DefaultLayout />,
           [ComponentState.Error]: () =>
-            errorLayout || defaultLayout('error', errorLayoutIcon, errorLayoutMessage, iconSize),
+            errorLayout || (
+              <DefaultLayout
+                mode='error'
+                LayoutIcon={errorLayoutIcon}
+                message={errorLayoutMessage}
+                iconSize={iconSize}
+              />
+            ),
           [ComponentState.Empty]: () =>
-            emptyLayout || defaultLayout('empty', emptyLayoutIcon, emptyLayoutMessage, iconSize),
-          [ComponentState.Hydrated]: () => hydratedLayout(data!),
+            emptyLayout || (
+              <DefaultLayout
+                mode='empty'
+                LayoutIcon={emptyLayoutIcon}
+                message={emptyLayoutMessage}
+                iconSize={iconSize}
+              />
+            ),
+          [ComponentState.Hydrated]: () => hydratedLayout(localData || data, setLocalData),
         }}
       </Switch>
     ),
@@ -172,11 +193,25 @@ const useObservableQueryLayout = <T extends {} | T[]>({
     layout: (
       <Switch value={state.get()}>
         {{
-          [ComponentState.Loading]: () => loadingLayout || defaultLayout('loading'),
+          [ComponentState.Loading]: () => loadingLayout || <DefaultLayout />,
           [ComponentState.Error]: () =>
-            errorLayout || defaultLayout('error', errorLayoutIcon, errorLayoutMessage, iconSize),
+            errorLayout || (
+              <DefaultLayout
+                mode='error'
+                LayoutIcon={errorLayoutIcon}
+                message={errorLayoutMessage}
+                iconSize={iconSize}
+              />
+            ),
           [ComponentState.Empty]: () =>
-            emptyLayout || defaultLayout('empty', emptyLayoutIcon, emptyLayoutMessage, iconSize),
+            emptyLayout || (
+              <DefaultLayout
+                mode='empty'
+                LayoutIcon={emptyLayoutIcon}
+                message={emptyLayoutMessage}
+                iconSize={iconSize}
+              />
+            ),
           [ComponentState.Hydrated]: () => hydratedLayout(data),
         }}
       </Switch>
@@ -184,21 +219,35 @@ const useObservableQueryLayout = <T extends {} | T[]>({
   }
 }
 
-const defaultLayout = (
-  mode: 'error' | 'empty' | 'loading',
-  LayoutIcon?: IconType,
-  message?: string,
-  iconSize = 128,
-) => {
-  if (mode === 'loading') return <ThreeDotsWave />
+type DefaultLayoutProps = {
+  mode?: 'error' | 'empty' | 'loading'
+  LayoutIcon?: IconType
+  message?: string
+  iconSize?: number
+} & CenterProps
+
+const DefaultLayout = (props: DefaultLayoutProps) => {
+  const mode = props.mode || 'loading'
+  const LayoutIcon = props.LayoutIcon
+  const iconSize = props.iconSize || 128
+  const centerProperties = props as Omit<
+    DefaultLayoutProps,
+    'mode' | 'LayoutIcon' | 'message' | 'iconSize'
+  >
+  if (mode === 'loading')
+    return (
+      <Center color='gray.500' {...centerProperties}>
+        <ThreeDotsWave />
+      </Center>
+    )
   const defaultLayoutIcon =
     mode === 'error' ? <FcHighPriority size={iconSize} /> : <FcViewDetails size={iconSize} />
   const defaultMessage = mode === 'error' ? 'Error loading data, please retry' : 'No data yet'
   return (
-    <Center color='gray.500' w='full'>
+    <Center color='gray.500' {...centerProperties}>
       <VStack>
         {LayoutIcon ? <LayoutIcon size={iconSize} /> : defaultLayoutIcon}
-        <Heading>{message || defaultMessage}</Heading>
+        <Heading>{props.message || defaultMessage}</Heading>
       </VStack>
     </Center>
   )
@@ -209,5 +258,7 @@ export {
   useObservableQueryState,
   useQueryLayout,
   useObservableQueryLayout,
-  defaultLayout,
+  DefaultLayout as ComponentStateDefaultLayout,
+  ComponentState,
+  type DefaultLayoutProps,
 }

@@ -8,7 +8,11 @@ Meet a new and elegant way of managing your GET queries components (strongly typ
 
 enforcing the good pattern of handling errors and empty placeholders smoothly, with a flat linear structure.
 
-## How to use
+## 🚀 Demo
+
+[https://use-query-layout.vercel.app](https://use-query-layout.vercel.app)
+
+## 📖 How to use
 
 `useQueryLayout` is generic and can be used with any type of data. Here, the type is inferred from the `queryFn` return type.
 
@@ -27,7 +31,7 @@ const Component = () => {
 
 Cherry on the cake: loadingLayout, errorLayout and emptyLayout are optional and can be omitted: some default are implemented already for you.
 
-## Customize
+## ✨ Customize
 
 Here are all the options you can pass to customize the hook `useQueryLayout`:
 
@@ -66,7 +70,7 @@ const Component = () => {
 
 ![Default empty layout](img/default-empty-layout.png)
 
-## Use Legend state power
+## ⚡ Use Legend state power
 
 There is a second hook drop in replacement `useObservableQueryLayout` that can be used with [Legend State](https://legendapp.com/open-source/state) to manage your state. It allows you to use the power of [For](https://legendapp.com/open-source/state/fine-grained-reactivity/#for) in legend state for example.
 

@@ -1,8 +1,8 @@
 import Post from '@/models'
-import {Box, Button, Center, Divider, Heading, HStack, VStack} from '@chakra-ui/react'
-import {FaArrowRight} from 'react-icons/fa6'
+import {Box, Button, Divider, Heading, HStack, VStack} from '@chakra-ui/react'
+import {FaArrowRight, FaTrash} from 'react-icons/fa6'
 
-const PostItem = ({post}: {post: Post}) => (
+const PostItem = ({post, onDelete}: {post: Post; onDelete: () => void}) => (
   <Box p={5} pos='relative' borderRadius='lg' border='solid 1px lightgray'>
     <VStack alignItems='start' spacing={4} pt={5} overflowX='hidden'>
       <HStack justifyContent='space-between' w='full'>
@@ -13,11 +13,14 @@ const PostItem = ({post}: {post: Post}) => (
 
       <Divider />
 
-      <Center w='full'>
+      <HStack alignSelf='center'>
         <Button variant='solid' rightIcon={<FaArrowRight />}>
           Go to post
         </Button>
-      </Center>
+        <Button variant='solid' rightIcon={<FaTrash />} onClick={onDelete}>
+          Delete
+        </Button>
+      </HStack>
     </VStack>
   </Box>
 )

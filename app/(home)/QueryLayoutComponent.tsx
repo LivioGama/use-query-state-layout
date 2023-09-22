@@ -5,17 +5,28 @@ import PostList from '@/app/(home)/PostList'
 import {useQueryLayout} from '@/app/useQueryStateLayout'
 import Post from '@/models'
 import api from '@/services/api'
-import {Children} from 'react'
+import {Children, useRef} from 'react'
+import xor from 'lodash/xor'
 
 export const QueryLayoutComponent = () => {
+  const renderCount = ++useRef(0).current
   const {layout} = useQueryLayout({
     queryKey: ['getPosts'],
     queryFn: () => api.get<Post[]>(`/posts`).then(res => res.data),
     loadingLayout: <Placeholder />,
-    hydratedLayout: posts => (
-      <PostList>{Children.toArray(posts.map(post => <PostItem post={post} />))}</PostList>
+    hydratedLayout: (posts, setPosts) => (
+      <PostList>
+        {Children.toArray(
+          posts.map(post => <PostItem post={post} onDelete={() => setPosts(xor(posts, [post]))} />),
+        )}
+      </PostList>
     ),
   })
 
-  return <Body layout={layout} />
+  return (
+    <>
+      <div>Renders: {renderCount}</div>
+      <Body layout={layout} />
+    </>
+  )
 }
