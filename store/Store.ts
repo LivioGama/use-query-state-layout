@@ -3,7 +3,7 @@ import {configureObservablePersistence, persistObservable} from '@legendapp/stat
 import {ObservablePersistLocalStorage} from '@legendapp/state/persist-plugins/local-storage'
 
 configureObservablePersistence({
-  persistLocal: ObservablePersistLocalStorage,
+  pluginLocal: ObservablePersistLocalStorage,
 })
 
 const mode = observable(false)

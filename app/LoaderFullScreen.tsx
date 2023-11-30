@@ -39,7 +39,8 @@ const DotVariants = {
 
 const DotTransition = {
   duration: 0.5,
-  yoyo: Infinity,
+  repeatType: 'mirror' as const,
+  repeat: Infinity,
   ease: 'easeInOut',
 }
 

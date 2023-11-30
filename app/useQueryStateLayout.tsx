@@ -44,7 +44,7 @@ interface SizeProps {
 }
 
 interface HydratedProps<T> {
-  hydratedLayout: (data: T) => ReactNode | ReactNode[]
+  hydratedLayout: (data: T, setData?: (data: T) => void) => ReactNode | ReactNode[]
 }
 
 interface ObservableHydratedProps<T> {

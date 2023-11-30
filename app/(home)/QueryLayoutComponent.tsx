@@ -5,8 +5,8 @@ import PostList from '@/app/(home)/PostList'
 import {useQueryLayout} from '@/app/useQueryStateLayout'
 import Post from '@/models'
 import api from '@/services/api'
-import {Children, useRef} from 'react'
 import xor from 'lodash/xor'
+import {Children, useRef} from 'react'
 
 export const QueryLayoutComponent = () => {
   const renderCount = ++useRef(0).current
